@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -108,6 +110,16 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawerLayout, innerDrawerLayout;
     private NavigationView mainNavigationView, settingsNavigationView;
 
+    int open = 0;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_categories_drawer, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,15 +148,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-            drawerLayout.closeDrawer(Gravity.LEFT);
-        }
-        else if(innerDrawerLayout.isDrawerOpen(Gravity.LEFT)){
+        if(innerDrawerLayout.isDrawerOpen(Gravity.LEFT)){
             innerDrawerLayout.closeDrawer(Gravity.LEFT);
             drawerLayout.openDrawer(Gravity.LEFT);
             Log.v("Inner open", "Inner open");
         }
+        else if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            drawerLayout.closeDrawer(Gravity.LEFT);
+            Log.v("Outer open", "Outer open");
+        }
         else {
+            Log.v("Closed", "Closed");
             super.onBackPressed();
         }
     }
@@ -152,11 +166,13 @@ public class MainActivity extends AppCompatActivity
     private void openInnerDrawer() {
         innerDrawerLayout.openDrawer(Gravity.LEFT);
         innerDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+        open = 1;
     }
 
     private void closeInnerDrawer() {
         innerDrawerLayout.closeDrawer(Gravity.LEFT);
         innerDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        open = 0;
     }
 
     @Override
